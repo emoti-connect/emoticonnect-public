@@ -103,7 +103,7 @@ def send_to_github(data):
 
     # Set the authentication headers (if required)
     headers = {
-        'Authorization': 'Bearer YOUR_ACCESS_TOKEN',  # Replace with your GitHub personal access token
+        'Authorization': 'Bearer github_token',  # Replace with your GitHub personal access token
         'Content-Type': 'application/json'
     }
 
