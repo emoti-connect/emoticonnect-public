@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AWS Lambda Data Display</title>
+</head>
+<body>
+  <h1>Display AWS Lambda Data</h1>
+  <div id="data-container"></div>
+
+  <script>
+    // Make an AJAX request to retrieve the Lambda data
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          const responseData = JSON.parse(xhr.responseText);
+          displayData(responseData.body);
+        } else {
+          console.error('Error retrieving Lambda data:', xhr.status, xhr.statusText);
+        }
+      }
+    };
+    xhr.open('GET', 'https://28tc3d25ic.execute-api.us-east-1.amazonaws.com/default/get-emotion'); // Replace <AWS_LAMBDA_ENDPOINT> with the actual endpoint URL of your AWS Lambda function
+    xhr.send();
+
+    // Function to display the data on the web page
+    function displayData(data) {
+      const dataContainer = document.getElementById('data-container');
+      dataContainer.textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
