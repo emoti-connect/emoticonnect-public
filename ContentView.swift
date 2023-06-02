@@ -11,8 +11,6 @@ class AudioRecorderDelegate: NSObject, AVAudioRecorderDelegate {
     }
 }
 
-
-
 struct ContentView: View {
     @State private var isRecording = false
     @State private var audioRecorder: AVAudioRecorder?
