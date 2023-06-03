@@ -87,11 +87,6 @@ def lambda_handler(event, context):
         
         response = chatgpt_inference(messages = messages, model = model, max_tokens=max_tokens, temperature=temperature)                               
 
-    # Perform further processing on the downloaded file
-    # Example:
-    # Process the audio file using your desired logic
-    # ...
-
     
     return {
         'statusCode': 200,
