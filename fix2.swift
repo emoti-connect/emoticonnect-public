@@ -20,7 +20,7 @@ struct ContentView: View {
         VStack {
             Button(action: {
                 if isRecording {
-                    stopRecording()
+                    stopAndUploadRecording()
                 } else {
                     startRecording()
                 }
@@ -32,7 +32,7 @@ struct ContentView: View {
             configureAudioSession()
         }
         .onDisappear {
-            stopRecording()
+            stopAndUploadRecording()
         }
     }
     
@@ -43,10 +43,10 @@ struct ContentView: View {
             try audioSession.setCategory(.record, mode: .default)
             try audioSession.setActive(true)
             
-            audioSession.requestRecordPermission { [weak self] allowed in
+            audioSession.requestRecordPermission { allowed in
                 DispatchQueue.main.async {
                     if allowed {
-                        self?.startRecording()
+                        self.startRecording()
                     } else {
                         print("Permission denied")
                     }
@@ -90,10 +90,28 @@ struct ContentView: View {
         
         let audioFileURL = getDocumentsDirectory().appendingPathComponent("recording.wav")
         let url = URL(string: "https://7hb5wxrmzqw7x4tuyeck2kgl5a0brzco.lambda-url.us-east-1.on.aws/")!
-        var request = URLRequest(url: url, 
+        var request = URLRequest(url: url,
 cachePolicy: .reloadIgnoringLocalCacheData,
                                  timeoutInterval: 10)
         request.httpMethod = "POST"
+        
+        do {
+            let audioData = try Data(contentsOf: audioFileURL)
+            let base64Audio = audioData.base64EncodedString()
+
+            let jsonData: [String: Any] = ["audio": base64Audio]
+            let requestBody = try JSONSerialization.data(withJSONObject: jsonData)
+
+            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+            request.httpMethod = "POST"
+            request.httpBody = requestBody
+
+
+            // Rest of the code remains the same
+        } catch {
+            print("Failed to read audio data: \(error.localizedDescription)")
+        }
+
         
         do {
             let audioData = try Data(contentsOf: audioFileURL)
@@ -130,3 +148,4 @@ struct ContentView_Previews: PreviewProvider {
 //timer set for 10 second chunks
 //using URLSession.shared.uploadTask(with:from:) for upload again
 //some more error handling
+
