@@ -59,7 +59,7 @@ struct ContentView: View {
     }
     
     private func startRecording() {
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.wav")
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("processed-audio.wav")
         
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatLinearPCM,
@@ -88,13 +88,13 @@ struct ContentView: View {
         audioRecorder = nil
         isRecording = false
         
-        let audioFileURL = getDocumentsDirectory().appendingPathComponent("recording.wav")
+        let audioFileURL = getDocumentsDirectory().appendingPathComponent("processed-audio.wav")
         
         // Convert to MP3
         let mp3FileURL = convertToMP3(audioFileURL: audioFileURL)
         
         // Configure AWS
-        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: "YOUR_ACCESS_KEY", secretKey: "YOUR_SECRET_KEY") // Replace with your AWS access key and secret key
+        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: "[aws_key]", secretKey: "[aws_secret]") // Replace with your AWS access key and secret key
         let configuration = AWSServiceConfiguration(region: .USEast1, credentialsProvider: credentialsProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         
@@ -102,7 +102,7 @@ struct ContentView: View {
         let transferManager = AWSS3TransferManager.default()
         
         let uploadRequest = AWSS3TransferManagerUploadRequest()
-        uploadRequest?.bucket = "YOUR_S3_BUCKET_NAME" // Replace with your S3 bucket name
+        uploadRequest?.bucket = "emoticonnect" // Replace with your S3 bucket name
         uploadRequest?.key = "audio/output/processed-audio.mp3"
         uploadRequest?.body = mp3FileURL
         
@@ -150,4 +150,10 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+//"YOUR_ACCESS_KEY" = aws access key = [aws_key]
+//"YOUR_SECRET_KEY" = aws secret key = [aws_secret]
+//"YOUR_S3_BUCKET_NAME" = name of bucket = emoticonnect
+
+
 
