@@ -91,7 +91,7 @@ struct ContentView: View {
         let audioFileURL = getDocumentsDirectory().appendingPathComponent("recording.wav")
         
         // Configure AWS
-        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: "YOUR_ACCESS_KEY", secretKey: "YOUR_SECRET_KEY")
+        let credentialsProvider = AWSStaticCredentialsProvider(accessKey: "[aws_key]", secretKey: "[aws_secret]")
         let configuration = AWSServiceConfiguration(region: .USEast1, credentialsProvider: credentialsProvider)
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         
@@ -99,7 +99,7 @@ struct ContentView: View {
         let transferManager = AWSS3TransferManager.default()
         
         let uploadRequest = AWSS3TransferManagerUploadRequest()
-        uploadRequest?.bucket = "YOUR_S3_BUCKET_NAME"
+        uploadRequest?.bucket = "emoticonnect"
         uploadRequest?.key = "recordings/\(UUID().uuidString).wav"
         uploadRequest?.body = audioFileURL
         
@@ -126,10 +126,10 @@ struct ContentView_Previews: PreviewProvider {
 
 //for use with a bucket if bucket works
 //no use for endpoint url anymore
-//we simply use the following: (still need to see how to get these tho)
-//"YOUR_ACCESS_KEY" = aws access key
-//"YOUR_SECRET_KEY" = aws secret key
-//"YOUR_S3_BUCKET_NAME" = name of bucket
+//we simply use the following:
+//"YOUR_ACCESS_KEY" = aws access key = [aws_key]
+//"YOUR_SECRET_KEY" = aws secret key = [aws_secret]
+//"YOUR_S3_BUCKET_NAME" = name of bucket = emoticonnect
 
 
 
