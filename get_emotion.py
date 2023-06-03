@@ -52,8 +52,7 @@ def lambda_handler(event, context):
         response = chatgpt_inference(messages = messages, model = model, max_tokens=max_tokens, temperature=temperature)
         return {
         'statusCode': 200,
-        'request_message': messages,
-        'body': response
+        'body': json.loads(response["choices"][0]["message"]["content"])
         }
     else:
         return {
