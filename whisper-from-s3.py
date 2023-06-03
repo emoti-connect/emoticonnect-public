@@ -30,6 +30,8 @@ def whisper_inference(media_file_path):
 
     responsetext = response["text"]    
     return responsetext
+  
+  
 
 def lambda_handler(event, context):
     # Specify the AWS credentials and region
@@ -50,6 +52,7 @@ def lambda_handler(event, context):
     s3_client.download_file(bucket_name, object_key, local_file_name)
 
     output = whisper_inference('/tmp/audio.mp3')
+
                                
                                
     if("key" in event and event["key"]=="0987654321"):
@@ -71,7 +74,7 @@ def lambda_handler(event, context):
         "Emotion: Happiness\\nHappiness Intensity: [ChatGPTs assesment of happiness intensity on a scale of 1-10]\\nHappiness Confidence: [ChatGPTs confidence level for detecting happiness as a percentage]\\n\\nEmotion: Sadness\\nSadness Intensity: [ChatGPTs assesment of sadness intensity on a scale of 1-10]\\nSadness Confidence: [ChatGPTs confidence level for detecting sadness as a percentage]\\n\\nEmotion: Anger\\nAnger Intensity: [ChatGPTs assesment of angerintensity on a scale of 1-10]\\nAnger Confidence: [ChatGPT confidence level for detecting anger as a percentage]\\n\\nEmotion: Fear\\nFear Intensity: [ChatGPTs assesment of fear intensity on a scale of 1-10]\\nFear Confidence: [ChatGPSs confidence level for detecting fear as a percentage]\\n\\nEmotion: Neutral\\nNeutral Intensity: [ChatGPTs assesment of neutralintensity on a scale of 1-10]\\nNeutral Confidence: [ChatGPTs confidence level for detecting neutrality as a percentage]\\n\\nPrimary Emotion: [ChatGPTs calculation of the most proeminent emotion based on confidence and intensity of the five emotions]\\nSecondary Emotion: [ChatGPTs calculation of the second most proeminent emotion based on confidence and intensity of the five emotions]\\nBalanced or Not Balanced: [ChatGPTs assesment whether the primary and secondary emotions are balanced or not balanced (1 means balanced, 0 means not balanced)]"
         },{
         "role": "user",
-        "content": "Can you provide an answer in a json format for the following text:"
+        "content": "Can you provide an answer in the form of json of 'Primary Emotion' and 'confidence' score for the primary emotion for the following text:"
         }]""")
             messages[2]["content"] += output
         
@@ -87,6 +90,17 @@ def lambda_handler(event, context):
         
         response = chatgpt_inference(messages = messages, model = model, max_tokens=max_tokens, temperature=temperature)                               
 
+        if response and "choices" in response:
+            assistant_message = response["choices"][0]["message"]["content"]
+            assistant_data = json.loads(assistant_message)
+
+            primary_emotion = assistant_data.get("Primary Emotion")
+            confidence_score = assistant_data.get("Confidence")
+
+            response = {
+                "Primary Emotion": primary_emotion,
+                "Confidence Score": confidence_score
+            }
     
     return {
         'statusCode': 200,
