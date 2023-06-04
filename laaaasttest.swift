@@ -8,8 +8,8 @@ func sendToAWSLambda(base64String: String) {
     }
 
     let jsonData: [String: Any] = [
-        "base64File": base64String
-        // Include any other relevant data in the event JSON
+        "key": "0987654321",
+        "audio": base64String
     ]
 
     do {
